@@ -1,0 +1,82 @@
+// BellmanFord.cpp : Defines the entry point for the console application.
+//
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <iostream>
+using namespace std;
+/*
+dane: V(G), E(G) //zbiór wierzchołków, zbiór krawędzi grafu G
+d[1..n] //tablica odległości
+d[0] = 0;
+foreach(v in V(G)/v0)
+d[v] = +inf;
+for(i=1; i< n; i++) // I
+foreach((u,v) in E(G)) // II
+if(d[u] + waga((u,v)) < d[v])
+d[v] = d[u] + waga((u,v));
+*/
+
+int changteInfToZero(int val)
+{
+	if (val > 100001)
+		return 0;
+	return val;
+}
+
+int main()
+{
+	int p;
+	int n;
+
+	int infinity = 9999999;
+
+	int odl[100];
+	int graf[100][100];
+
+	std::cin >> p;
+
+	while (p--)
+	{
+		std::cin >> n;
+
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < n; j++)
+			{
+				cin >> graf[i][j];
+			}
+		}
+
+		odl[0] = 0;
+		for (int i = 1; i < n; i++) { odl[i] = infinity; }
+
+		for (int mainIndex = 0; mainIndex < (n - 1); mainIndex++)
+		{
+			for (int u = 0; u < n; u++)
+			{
+				for (int v = 0; v < n; v++)
+				{
+					if (graf[u][v] == 0)
+						continue;
+
+					if (odl[u] + graf[u][v] < odl[v])
+					{
+						odl[v] = odl[u] + graf[u][v];
+					}
+				}
+			}
+
+			for (int i = 0; i < n - 1; i++)
+			{
+				std::cout << changteInfToZero(odl[i]) << " ";
+			}
+			std::cout << changteInfToZero(odl[n - 1]) << "\n";
+		}
+		std::cout << "\n";
+	}
+    return 0;
+}
