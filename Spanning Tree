@@ -1,0 +1,159 @@
+// DrzewoSpinajace.cpp : Defines the entry point for the console application.
+//
+
+#include <iostream>
+
+using namespace std;
+
+int n;
+int m;
+int przejscie[1000][1000];
+
+int main()
+{
+	char wejscie[100];
+	int pomoc = 0;
+
+	int  l;
+
+	cin >> l;
+	while (l--)
+	{
+		for (int i = 1; i < 100; i++)
+		{
+			wejscie[i] = 'z';
+			if (wejscie[i - 1] != '=')
+				cin >> wejscie[i];
+			else if (pomoc == 0)
+			{
+				cin >> n;
+				pomoc++;
+			}
+			else
+			{
+				cin >> m;
+				break;
+			}
+		}
+
+		pomoc = 0;
+
+		int l_na_wejscie2[3][10000];
+
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 10000; j++)
+				l_na_wejscie2[i][j] = 9999999;
+		}
+
+		char wejscie2[100];
+
+		for (int j = 0; j < m; j++)
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				wejscie2[i] = 'z';
+				if (wejscie2[i - 1] != '{' && wejscie2[i - 1] != ',' && wejscie2[i-1] != '}')
+					cin >> wejscie2[i];
+				else if (wejscie2[i - 1] == '{')
+				{
+					cin >> l_na_wejscie2[0][j];
+				}
+				else if (wejscie2[i - 1] == ',')
+				{
+					cin >> l_na_wejscie2[1][j];
+				}
+				else if (wejscie2[i - 1] == '}')
+				{
+					cin >> l_na_wejscie2[2][j];
+				}
+			}
+		}
+		
+		int posortowane[3][10000];
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 10000; j++)
+				posortowane[i][j] = 9999999;
+		}
+		int minimum = 0;
+		int licznik = 0;
+		int zmienna = m;
+		while (zmienna--)
+		{
+			for (int j = 0; j < m; j++)
+			{
+				if (l_na_wejscie2[2][j] > l_na_wejscie2[2][j + 1])
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						posortowane[i][j] = l_na_wejscie2[i][j + 1];
+						l_na_wejscie2[i][j + 1] = l_na_wejscie2[i][j];
+						l_na_wejscie2[i][j] = posortowane[i][j];
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i <= n; i++)
+		{
+			for (int j = 0; j <= n; j++)
+			{
+				przejscie[i][j] = przejscie[j][i] = 0;
+			}
+		}
+
+		int sumaWag = 0;
+		int znalezioneKrawedzie = 0;
+
+		for (int i = 0; i < m; i++)
+		{
+			if (znalezioneKrawedzie == (n - 1))
+			{
+				break;
+			}
+			int w1 = l_na_wejscie2[0][i];
+			int w2 = l_na_wejscie2[1][i];
+			if (przejscie[w1][w2] == 0)
+			{
+				sumaWag += l_na_wejscie2[2][i];
+				znalezioneKrawedzie++;
+
+				for (int i = 0; i < n; i++)
+				{
+					if (przejscie[w1][i])
+					{
+						przejscie[w2][i] = przejscie[i][w2] = 1;
+					}
+					if (przejscie[w2][i])
+					{
+						przejscie[w1][i] = przejscie[i][w1] = 1;
+					}
+
+					for (int j = 0; j < n; j++)
+					{
+						if (przejscie[w1][i] && przejscie[w2][j] ||
+							przejscie[w2][i] && przejscie[w1][j])
+						{
+							przejscie[j][i] = przejscie[i][j] = 1;
+						}
+					}
+				}
+				przejscie[w2][w1] = przejscie[w1][w2] = 1;
+			}
+		}
+
+		cout << sumaWag << "\n";
+
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 10000; j++)
+				l_na_wejscie2[i][j] = 0;
+		}
+
+		for (int i = 0; i < 100; i++)
+			wejscie2[i] = 'z';
+	}
+
+	return 0;
+}
