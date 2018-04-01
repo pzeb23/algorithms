@@ -8,17 +8,6 @@
 #include <stack>
 #include <iostream>
 using namespace std;
-/*
-dane: V(G), E(G) //zbiór wierzchołków, zbiór krawędzi grafu G
-d[1..n] //tablica odległości
-d[0] = 0;
-foreach(v in V(G)/v0)
-d[v] = +inf;
-for(i=1; i< n; i++) // I
-foreach((u,v) in E(G)) // II
-if(d[u] + waga((u,v)) < d[v])
-d[v] = d[u] + waga((u,v));
-*/
 
 int changteInfToZero(int val)
 {
