@@ -1,0 +1,139 @@
+// CykleEulera.cpp : Defines the entry point for the console application.
+//
+
+#include <iostream>
+
+using namespace std;
+
+int graf[10000][10000];
+int stos[10000];
+int n,m;
+
+int indexStosu;
+void Euler(int wierzcholek, int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		if (graf[wierzcholek][i] != 0)
+		{
+			graf[wierzcholek][i] = graf[i][wierzcholek] = 0;
+			Euler(i, n);
+		}
+	}
+	stos[indexStosu] = wierzcholek;
+	indexStosu++;
+}
+int main()
+{
+	char wejscie[100];
+	int pomoc = 0;
+
+	int  l;
+
+	cin >> l;
+	while (l--)
+	{
+		for (int i = 1; i < 100; i++)
+		{
+			wejscie[i] = 'z';
+			if (wejscie[i - 1] != '=')
+				cin >> wejscie[i];
+			else if (pomoc == 0)
+			{
+				cin >> n;
+				pomoc++;
+			}
+			else
+			{
+				cin >> m;
+				break;
+			}
+		}
+
+		pomoc = 0;
+
+		for (int i = 0; i < 10000; i++)
+			for (int j = 0; j < 10000; j++)
+				graf[i][j] = 0;
+
+
+		int l_na_wejscie2[2][10000];
+
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 10000; j++)
+				l_na_wejscie2[i][j] = 0;
+		}
+
+		char wejscie2[100];
+
+
+		for (int j = 0; j < m; j++)
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				wejscie2[i] = 'z';
+				if (wejscie2[i - 1] != '{' && wejscie2[i - 1] != ',')
+					cin >> wejscie2[i];
+				else if (wejscie2[i - 1] == '{')
+				{
+					cin >> l_na_wejscie2[0][j];
+				}
+				else if (wejscie2[i - 1] == ',')
+				{
+					cin >> l_na_wejscie2[1][j];
+				}
+			}
+		}
+
+		for (int i = 0; i < 10000; i++)
+		{
+			for (int j = 0; j < 10000; j++)
+			{
+				graf[i][j] = 0;
+			}
+		}
+
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < n; j++)
+			{
+				for (int k = 0; k < m; k++)
+				{
+					if (l_na_wejscie2[0][k] == i && l_na_wejscie2[1][k] == j)
+						graf[i][j] = graf[j][i] = 1;
+				}
+			}
+		}
+		indexStosu = 0;
+
+		Euler(0, n);
+
+		for (int i = 0; i < (m + 1); i++)
+			cout << stos[i] << " ";
+		cout << endl;
+
+		indexStosu = 0;
+		
+		for (int i = 0; i < 10000; i++)
+		{
+			for (int j = 0; j < 10000; j++)
+			{
+				graf[i][j] = 0;
+			}
+		}
+		n = m = 0;
+		for (int i=0; i< 10000; i++)
+			stos[i] = 0;
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 10000; j++)
+				l_na_wejscie2[i][j] = 0;
+		}
+
+		for (int i = 0; i < 100; i++)
+			wejscie2[i] = 'z';
+	}
+
+	return 0;
+}
