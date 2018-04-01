@@ -1,0 +1,162 @@
+// AlgorytmDijkstry.cpp : Defines the entry point for the console application.
+//
+
+#include <stdlib.h>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <iostream>
+#include <stack>
+
+using namespace std;
+
+#define nieskonczonosc 99999999
+
+int     D[10001];
+
+class   cGraf 
+{
+
+public:
+
+	int** macierz;
+
+
+	int n;
+
+	cGraf(int n);
+
+	vector<int> Nastepniki(int x) 
+	{
+		vector<int> wynik;
+
+		for (int i = 0; i<n; i++)
+			if ((macierz[x][i] != nieskonczonosc) && (macierz[x][i] != 0))
+				wynik.push_back(i);
+
+		return(wynik);
+	}
+
+};
+cGraf::cGraf(int n)
+{
+	this->n = n;
+	this->macierz = new int*[n];
+	for (int i = 0; i < n; i++)
+	{
+		macierz[i] = new int[n];
+	}
+}
+class cWierzcholek 
+{
+
+public:
+
+	int V;
+
+	int* Odl;
+
+	friend bool operator < (const cWierzcholek &p1, const cWierzcholek &p2) {
+		return(*(p1.Odl)>*(p2.Odl));
+	}
+
+};
+
+
+int main()
+{
+	int n;
+	string name[10001];
+	int p;
+	int l;
+
+	vector<cWierzcholek> Q;
+	cWierzcholek wierzcholek;
+
+	vector<int>           nastepniki;
+	cin >> l;
+	while (l--)
+	{
+		cin >>n;
+		cGraf Graf = cGraf(n);
+
+		int liczba_miast = Graf.n;
+
+		for (int i = 0; i < Graf.n; i++)
+		{
+			for (int j = 0; j < Graf.n; j++)
+			{
+				if (i != j)
+					Graf.macierz[i][j] = nieskonczonosc;
+				else
+					Graf.macierz[i][j] = Graf.macierz[j][i] = 0;
+			}
+		}
+
+		for (int i = 0; i < liczba_miast; i++)
+		{
+			cin >> name[i];
+			cin >> p;
+			int index = 0, koszt = 0;
+			for (int j = 0; j < p; j++)
+			{
+				cin >> index >> koszt;
+				Graf.macierz[i][index-1] = koszt;
+				Graf.macierz[index-1][i] = koszt;
+			}
+		}
+
+		int l_polaczen;
+		cin >> l_polaczen;
+		string polaczenia[2];
+
+		int start, koncowy;
+    
+		for (int u = 0; u<l_polaczen; u++)
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				cin >> polaczenia[i];
+			}
+			for (int i = 0; i < liczba_miast; i++)
+			{
+				if (name[i] == polaczenia[0])
+					start = i;
+				else if (name[i] == polaczenia[1])
+					koncowy = i;
+			}
+
+
+			for (int i = 0; i<Graf.n; i++) 
+			{
+				D[i] = Graf.macierz[start][i];
+
+				wierzcholek.V = i;
+				wierzcholek.Odl = &D[i];
+				Q.push_back(wierzcholek);
+			}
+			make_heap(Q.begin(), Q.end(), less<cWierzcholek>());
+
+			pop_heap(Q.begin(), Q.end());
+			Q.pop_back();
+
+			while (Q.empty() != true) 
+			{
+				make_heap(Q.begin(), Q.end(), less<cWierzcholek>());
+
+				wierzcholek = Q[0];
+
+				pop_heap(Q.begin(), Q.end());
+				Q.pop_back();
+
+				nastepniki = Graf.Nastepniki(wierzcholek.V);
+
+				for (int i = 0; i<nastepniki.size(); i++)
+					D[nastepniki[i]] = min(D[nastepniki[i]], D[wierzcholek.V] + Graf.macierz[wierzcholek.V][nastepniki[i]]);
+			}
+			
+				cout << D[koncowy] << endl;
+		}
+	}
+    return 0;
+}
